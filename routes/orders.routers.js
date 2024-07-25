@@ -17,12 +17,16 @@ validatorHandler(createOrders, 'body'),
     };
 });
 
+
 router.get('/', async (req,res,next)=>{
   try{
-    const {id,all}= req.query;
+    const {id,all,idCustomer,month,year}= req.query;
     if(id){
       const searchedOrder = await services.findBy({id});
-      res.status(200).json({message:'La orden es: ', data:searchedOrder});
+      res.status(200).json({data:searchedOrder});
+    }else if(idCustomer,month,year){
+      const orders= await services.findBy({idCustomer,month,year});
+      res.status(200).json({orders});
     }else if(all){
       const orders= await services.findBy({all});
       res.status(200).json({message:'Las ordenes existentes son: ', data:orders});
@@ -31,6 +35,8 @@ router.get('/', async (req,res,next)=>{
     next(err);
   };
 });
+
+
 
 router.put('/:id',
   validatorHandler(updateOrders, 'body'),

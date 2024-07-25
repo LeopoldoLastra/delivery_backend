@@ -21,6 +21,16 @@ const OrdersSchema ={
     },
     onUpdate: 'CASCADE',
     onDelete: 'SET NULL'
+  },
+  month:{
+    allowNull:false,
+    type: DataTypes.ENUM('enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'),
+    field:'month',
+  },
+  year:{
+    allowNull:false,
+    type: DataTypes.INTEGER,
+    field:'year',
   }
 };
 

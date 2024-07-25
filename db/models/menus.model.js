@@ -27,7 +27,7 @@ const MenusSchema ={
     field:'menu_price'
   },
   menuObservations:{
-    allowNull:false,
+    allowNull:true,
     type:DataTypes.STRING,
     field:'menu_observations'
   }
@@ -49,6 +49,13 @@ class Menus extends Model{
       otherKey:'idDate'
       }
     );
+    this.belongsToMany(models.MenusDays,
+      {as:'menusDays',
+        through:models.MenusDays,
+        foreignKey:'idMenu',
+        otherKey:'idDay'
+      }
+    )
   };
 
   static config(sequelize){

@@ -19,16 +19,16 @@ validatorHandler(createCustomers, 'body'),
 
 router.get('/', async (req,res,next)=>{
   try{
-    const {id,all, dni}= req.query;
+    const {id,all,dni}= req.query;
     if(id){
       const searchedCustomer = await services.findBy({id});
-      res.status(200).json({message:'El cliente buscado es ', data:searchedCustomer});
+      res.status(200).json({data:searchedCustomer});
     }else if(dni){
       const searchedCustomer= await services.findBy({dni});
-      res.status(200).json({message:'El cliente buscado es: ', data:searchedCustomer});
+      res.status(200).json({data:searchedCustomer});
     }else if(all){
       const customers= await services.findBy({all});
-      res.status(200).json({message:'Los clientes encontradas son: ', data:customers});
+      res.status(200).json({data:customers});
     }
   }catch(err){
     next(err);

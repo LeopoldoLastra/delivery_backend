@@ -7,6 +7,8 @@ const {MenusOrders, MenusOrdersSchema}=require('./menus.order.model');
 const {Orders, OrdersSchema}=require('./orders.model');
 const {Organizations, OrganizationsSchema}=require('./organizations.model');
 const {Users, UsersSchema}=require('./users.model');
+const {Days, DaysSchema}=require('./days.model');
+const {MenusDays, MenusDaysSchema}=require('./menus.days.model');
 
 function setUpModels(sequelize){
   Menus.init(MenusSchema, Menus.config(sequelize));
@@ -18,14 +20,17 @@ function setUpModels(sequelize){
   Orders.init(OrdersSchema, Orders.config(sequelize));
   Organizations.init(OrganizationsSchema, Organizations.config(sequelize));
   Users.init(UsersSchema, Users.config(sequelize));
+  Days.init(DaysSchema, Days.config(sequelize));
+  MenusDays.init(MenusDaysSchema, MenusDays.config(sequelize));
 
   Menus.associate(sequelize.models);
   Customers.associate(sequelize.models);
- Dates.associate(sequelize.models);
+  Dates.associate(sequelize.models);
   Guardians.associate(sequelize.models);
   Orders.associate(sequelize.models);
   Organizations.associate(sequelize.models);
   Users.associate(sequelize.models);
+  Days.associate(sequelize.models);
 };
 
 

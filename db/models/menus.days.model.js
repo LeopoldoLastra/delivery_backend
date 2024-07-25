@@ -1,41 +1,42 @@
 const{Model, DataTypes, sequelize}=require('sequelize');
 
-const MENUS_ORDERS_TABLE = `menus_orders`;
+const MENUS_DAYS_TABLE = `menus_days`;
 
-const MenusOrdersSchema ={
-  idMenuOrder:{
+const MenusDaysSchema ={
+  idMenuDay:{
     allowNull:false,
     primaryKey:true,
     type: DataTypes.INTEGER,
     autoIncrement:true,
-    field: 'id_menu_order'
+    field: 'id_menu_day'
   },
   idMenu:{
     allowNull:false,
     type:DataTypes.INTEGER,
     field: 'id_menu'
   },
-  idOrder:{
+  idDay:{
     allowNull:false,
     type:DataTypes.INTEGER,
-    field: 'id_order'
+    field: 'id_day'
   },
-  date:{
+  enabled:{
     allowNull:false,
-    type:DataTypes.DATEONLY,
-    field: 'date'
-  }
+    type:DataTypes.INTEGER,
+    field: 'enabled',
+    defaultValue:'1'
+  },
 };
 
-class MenusOrders extends Model{
+class MenusDays extends Model{
   static config(sequelize){
     return{
       sequelize,
-      tableName:MENUS_ORDERS_TABLE,
-      modelName:'MenusOrders',
+      tableName:MENUS_DAYS_TABLE,
+      modelName:'MenusDays',
       timestamps:true
     }
   }
 };
 
-module.exports = {MENUS_ORDERS_TABLE, MenusOrdersSchema, MenusOrders}
+module.exports = {MENUS_DAYS_TABLE, MenusDaysSchema, MenusDays}

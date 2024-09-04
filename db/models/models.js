@@ -9,6 +9,10 @@ const {Organizations, OrganizationsSchema}=require('./organizations.model');
 const {Users, UsersSchema}=require('./users.model');
 const {Days, DaysSchema}=require('./days.model');
 const {MenusDays, MenusDaysSchema}=require('./menus.days.model');
+const {CateringCompanies, CateringCompaniesSchema}=require('./catering.companies.model');
+const {OrganizationsCaterings, OrganizationsCateringsSchema}=require('./organizations.caterings.model');
+const {OrganizationsTypes, OrganizationsTypesSchema}=require('./organizations.types.model');
+const {OrganizationsLocations, OrganizationsLocationsSchema}=require('./organizations.locations.model');
 
 function setUpModels(sequelize){
   Menus.init(MenusSchema, Menus.config(sequelize));
@@ -22,6 +26,11 @@ function setUpModels(sequelize){
   Users.init(UsersSchema, Users.config(sequelize));
   Days.init(DaysSchema, Days.config(sequelize));
   MenusDays.init(MenusDaysSchema, MenusDays.config(sequelize));
+  CateringCompanies.init(CateringCompaniesSchema, CateringCompanies.config(sequelize));
+  OrganizationsCaterings.init(OrganizationsCateringsSchema, OrganizationsCaterings.config(sequelize));
+  OrganizationsTypes.init(OrganizationsTypesSchema, OrganizationsTypes.config(sequelize));
+  OrganizationsLocations.init(OrganizationsLocationsSchema, OrganizationsLocations.config(sequelize));
+
 
   Menus.associate(sequelize.models);
   Customers.associate(sequelize.models);
@@ -31,6 +40,9 @@ function setUpModels(sequelize){
   Organizations.associate(sequelize.models);
   Users.associate(sequelize.models);
   Days.associate(sequelize.models);
+  CateringCompanies.associate(sequelize.models);
+  OrganizationsTypes.associate(sequelize.models);
+  OrganizationsLocations.associate(sequelize.models);
 };
 
 

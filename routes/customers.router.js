@@ -17,18 +17,29 @@ validatorHandler(createCustomers, 'body'),
     };
 });
 
+
+
 router.get('/', async (req,res,next)=>{
+//Por ahora solo uso por userId
+
   try{
-    const {id,all,dni}= req.query;
+    const {id,all,dni,userId,organizationId}= req.query;
     if(id){
       const searchedCustomer = await services.findBy({id});
-      res.status(200).json({data:searchedCustomer});
+      res.status(200).json(searchedCustomer);
     }else if(dni){
       const searchedCustomer= await services.findBy({dni});
-      res.status(200).json({data:searchedCustomer});
-    }else if(all){
+      res.status(200).json(searchedCustomer);
+    }else if(userId){
+      const searchedCustomer= await services.findBy({userId});
+      res.status(200).json(searchedCustomer);
+    }else if(organizationId){
+      const searchedData= await services.findBy({organizationId});
+      res.status(200).json({searchedData});
+    }
+    else if(all){
       const customers= await services.findBy({all});
-      res.status(200).json({data:customers});
+      res.status(200).json(customers);
     }
   }catch(err){
     next(err);

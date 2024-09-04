@@ -30,6 +30,11 @@ const MenusSchema ={
     allowNull:true,
     type:DataTypes.STRING,
     field:'menu_observations'
+  },
+  idCateringCompany:{
+    allowNull:false,
+    type:DataTypes.INTEGER,
+    field:'id_catering_company'
   }
 };
 
@@ -49,13 +54,14 @@ class Menus extends Model{
       otherKey:'idDate'
       }
     );
-    this.belongsToMany(models.MenusDays,
+    this.belongsToMany(models.Days,
       {as:'menusDays',
         through:models.MenusDays,
         foreignKey:'idMenu',
         otherKey:'idDay'
       }
-    )
+    ),
+    this.belongsTo(models.CateringCompanies,{as:'menusCateringCompany', foreignKey:'idCateringCompany'})
   };
 
   static config(sequelize){

@@ -5,6 +5,8 @@ const services = new OrdersServices();
 const validatorHandler=require('../middleware/validator.handler');
 const {createOrders,updateOrders}=require('../schemas/orders.schema');
 
+
+//UTILIZO EL POST DE ORDER
 router.post('/',
 validatorHandler(createOrders, 'body'),
   async (req,res,next)=>{
@@ -19,19 +21,36 @@ validatorHandler(createOrders, 'body'),
 
 
 router.get('/', async (req,res,next)=>{
-  try{
-    const {id,all,idCustomer,month,year}= req.query;
-    if(id){
-      const searchedOrder = await services.findBy({id});
-      res.status(200).json({data:searchedOrder});
-    }else if(idCustomer,month,year){
-      const orders= await services.findBy({idCustomer,month,year});
-      res.status(200).json({orders});
-    }else if(all){
-      const orders= await services.findBy({all});
-      res.status(200).json({message:'Las ordenes existentes son: ', data:orders});
-    }
-  }catch(err){
+//Por ahora solo uso por idCustomer,month,year
+
+try{
+  const {id,all,idCateringCompany,idCustomer,month,year,paid,delivered}= req.query;
+
+  if(paid || paid==0 && idCateringCompany){
+    const orders= await services.findBy({idCateringCompany,month,year,paid});
+    res.status(200).json(orders);
+  }else if(paid || paid==0){
+    const orders= await services.findBy({idCustomer,month,year,paid});
+    res.status(200).json(orders);
+  }else if(delivered || delivered==0){
+    const orders= await services.findBy({idCustomer,month,year, delivered});
+    res.status(200).json(orders);
+  }else if(idCateringCompany){
+    const orders= await services.findBy({idCateringCompany,month,year});
+    res.status(200).json(orders);
+  }else if(id){
+    const searchedOrder = await services.findBy({id});
+    res.status(200).json(searchedOrder);
+  }else if(idCustomer){
+    const orders= await services.findBy({idCustomer,month,year});
+    res.status(200).json(orders);
+  }else if(all){
+    const orders= await services.findBy({all});
+    res.status(200).json({message:'Las ordenes existentes son: ', data:orders});
+  }
+
+
+}catch(err){
     next(err);
   };
 });

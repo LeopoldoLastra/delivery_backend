@@ -26,7 +26,7 @@ class MenusServices{
     }
   };
 
-  async findBy({id,all,name}){
+  async findBy({id,all,name, cateringCompanyId}){
     try {
       if (id){
         const searchedMenu = await models.Menus.findByPk(id);
@@ -34,8 +34,15 @@ class MenusServices{
           throw boom.notFound('Menu not found');
         };
         return searchedMenu;
-      } else if (name){
-        const searchedMenu = await models.Menus.findOne({where:{menuName:name}});
+      } else if (cateringCompanyId){
+        const searchedMenu = await models.Menus.findAll({where:{idCateringCompany:cateringCompanyId},
+                                                        attributes: { exclude: ['createdAt','updatedAt']},
+                                                        include:[{model:models.Days,
+                                                                  as:'menusDays',
+                                                                  through:{attributes:['enabled']},
+                                                                  attributes: { exclude: ['createdAt','updatedAt','idMenuDay']}
+                                                                }]
+                                                          });
         if (!searchedMenu){
           throw boom.notFound('Menus not found');
         };
@@ -58,22 +65,34 @@ class MenusServices{
   };
 
 
-  async update(id,changes){
-    const menuToUpdate= await models.Menus.findByPk(id);
-      if(!menuToUpdate){
-        throw boom.notFound('Menu not found')
-      };
-    try{
-      const updatedMenu= await menuToUpdate.update(changes);
-      return updatedMenu;
-    }catch(err){
-      if (err.isBoom){
-        throw err;
-      };
-      throw boom.internal('Menu update error',{details: err.message})
-    };
+  async update(id, changes) {
+    const menuToUpdate = await models.Menus.findByPk(id);
+    if (!menuToUpdate) {
+      throw boom.notFound('Menu not found');
+    }
 
-  };
+    const transaction = await sequelize.transaction();
+
+    try {
+      const updatedMenu = await menuToUpdate.update(changes, { transaction });
+
+      if (changes.menusDays) {
+        await models.MenusDays.destroy({where: { idMenu: id },transaction});
+
+        const enableMenuByDay = changes.menusDays.map(day => ({idMenu: id,idDay: day.idDay}));
+
+        await models.MenusDays.bulkCreate(enableMenuByDay, { transaction });
+      }
+      await transaction.commit();
+      return updatedMenu;
+    } catch (err) {
+      await transaction.rollback();
+      if (err.isBoom) {
+        throw err;
+      }
+      throw boom.internal('Menu update error', { details: err.message });
+    }
+  }
 
   async delete(id) {
     const menuToDelete = await models.Menus.findByPk(id);

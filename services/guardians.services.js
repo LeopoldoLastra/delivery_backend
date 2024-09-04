@@ -11,7 +11,7 @@ class GuardiansServices{
     }
   };
 
-  async findBy({id,all,dni}){
+  async findBy({id,all,dni,userId}){
     try {
       if (id){
         const searchedGuardian = await models.Guardians.findByPk(id,{include:[{model:models.Customers,as:'guardiansCustomers',
@@ -23,7 +23,17 @@ class GuardiansServices{
           throw boom.notFound('Guardian not found');
         };
         return searchedGuardian;
-      } else if (dni){
+      } else if (userId){
+        const searchedGuardian = await models.Guardians.findOne({where:{idUser:userId},
+                                                                  include:[{model:models.Customers,as:'guardiansCustomers',
+                                                                                  include:[{model:models.Organizations, as:'customerOrganization'}]
+                                                                          }]
+                                                                  });
+        if (!searchedGuardian){
+          throw boom.notFound('Guardian not found');
+        };
+        return searchedGuardian;
+      }else if (dni){
         const searchedGuardian = await models.Guardians.findOne({where:{guardianDNI:dni},
                                                                   include:[{model:models.Customers,as:'guardiansCustomers',
                                                                                   include:[{model:models.Organizations, as:'customerOrganization'}]

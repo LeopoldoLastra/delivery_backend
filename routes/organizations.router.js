@@ -22,7 +22,7 @@ router.get('/', async (req,res,next)=>{
     const {id,all}= req.query;
     if(id){
       const searchedOrganization = await services.findBy({id});
-      res.status(200).json({message:'La organización buscada es ', data:searchedOrganization});
+      res.status(200).json({ data:searchedOrganization});
     }else if(all){
       const organizations= await services.findBy({all});
       res.status(200).json({message:'Las organizaciones encontradas son: ', data:organizations});

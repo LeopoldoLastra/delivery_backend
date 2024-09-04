@@ -11,7 +11,7 @@ class CustomersServices{
     }
   };
 
-  async findBy({id,all,dni}){
+  async findBy({id,all,dni,userId, organizationId}){
     try {
       if (id){
         const searchedCustomer = await models.Customers.findByPk(id,{include:[{model:models.Organizations,as:'customerOrganization'},
@@ -21,7 +21,30 @@ class CustomersServices{
           throw boom.notFound('Customer not found');
         };
         return searchedCustomer;
-      } else if (dni){
+      }//PROBABLEMENTE HAYA QUE BORRARLO
+      else if (organizationId){
+
+        const searchedOrganizationCustomers = await models.Customers.findAll({where:{idOrganization:organizationId},
+                                                                  include:[{model:models.Orders,as:'customerOrder', where:{month:'agosto'},
+                                                                    include:[{model:models.Menus,as:'orderedMenus'}]
+                                                                  }]});
+        if (!searchedOrganizationCustomers){
+          throw boom.notFound('Customer not found');
+        };
+
+        const dia= searchedOrganizationCustomers.orderbyCustomer
+
+        return searchedOrganizationCustomers;
+      }
+      else if (userId){
+        const searchedCustomer = await models.Customers.findOne({where:{idUser:userId},
+                                                                  include:[{model:models.Organizations,as:'customerOrganization'},
+                                                                          {model:models.Guardians,as:'customerGuardian'}]});
+        if (!searchedCustomer){
+          throw boom.notFound('Customer not found');
+        };
+        return searchedCustomer;
+      }else if (dni){
         const searchedCustomer = await models.Customers.findOne({where:{customerDNI:dni},
                                                                   include:[{model:models.Organizations,as:'customerOrganization'},
                                                                           {model:models.Guardians,as:'customerGuardian'}]});

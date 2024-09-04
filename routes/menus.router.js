@@ -5,6 +5,8 @@ const services = new MenusServices();
 const validatorHandler=require('../middleware/validator.handler');
 const {createMenus,updateMenus}=require('../schemas/menus.schema');
 
+
+//Uso el create
 router.post('/',
 validatorHandler(createMenus, 'body'),
   async (req,res,next)=>{
@@ -17,15 +19,16 @@ validatorHandler(createMenus, 'body'),
     };
 });
 
+//Por ahora solo use cateringCompanyIds
 router.get('/', async (req,res,next)=>{
   try{
-    const {id,all,name}= req.query;
+    const {id,all,name, cateringCompanyId}= req.query;
     if(id){
       const searchedMenu = await services.findBy({id});
       res.status(200).json({message:'El menú buscado es ', data:searchedMenu});
-    }else if(name){
-      const searchedMenu= await services.findBy({dni});
-      res.status(200).json({message:'El menú buscado es: ', data:searchedMenu});
+    }else if(cateringCompanyId){
+      const searchedMenu= await services.findBy({cateringCompanyId});
+      res.status(200).json(searchedMenu);
     }else if(all){
       const menus= await services.findBy({all});
       res.status(200).json({message:'Los menús encontradas son: ', data:menus});
@@ -35,6 +38,8 @@ router.get('/', async (req,res,next)=>{
   };
 });
 
+
+//Uso el update
 router.put('/:id',
   validatorHandler(updateMenus, 'body'),
   async (req,res,next)=>{

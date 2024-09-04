@@ -18,11 +18,16 @@ validatorHandler(createGuardians, 'body'),
 });
 
 router.get('/', async (req,res,next)=>{
+
+//HAsta ahora solo uso userId
   try{
-    const {id,all,dni}= req.query;
+    const {id,all,dni,userId}= req.query;
     if(id){
       const searchedGuardian = await services.findBy({id});
       res.status(200).json({message:'El tutor buscado es ', data:searchedGuardian});
+    }else if(userId){
+      const searchedGuardian= await services.findBy({userId});
+      res.status(200).json(searchedGuardian);
     }else if(dni){
       const searchedGuardian= await services.findBy({dni});
       res.status(200).json({message:'El tutor buscado es: ', data:searchedGuardian});

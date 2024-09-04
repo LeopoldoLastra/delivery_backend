@@ -26,35 +26,75 @@ class OrdersServices{
     }
   };
 
-  async findBy({id,all,idCustomer,month,year}){
-    try {
-      if (id){
-        const searchedOrder = await models.Orders.findByPk(id,{include:[{model:models.Customers,as:'orderbyCustomer', include:[{model:models.Organizations,as:'customerOrganization'}]},
-                                                                        {model:models.Menus,as:'orderedMenus'}
-                                                                        ]
-                                                              });
-        if (!searchedOrder){
-          throw boom.notFound('Customer not found');
-        };
-        return searchedOrder;
-      } else if(idCustomer,month,year){
-        const orders = await models.Orders.findAll({where:{idCustomer:idCustomer,year:year,month:month},include:[{model:models.Menus,as:'orderedMenus'}]});
+  async findBy({id,all,idCateringCompany,idCustomer,month,year,paid,delivered}){
+    try{
+
+      if( idCateringCompany && paid || paid==0){
+        const orders = await models.Orders.findAll({where:{idCateringCompany:idCateringCompany,year:year,month:month,paid:paid}});
         if (!orders) {
           throw boom.notFound('Orders not found');
         };
         return orders;
-      } else if(all){
-        const orders = await models.Orders.findAll({include:[{model:models.Customers,as:'orderbyCustomer'},
-                                                             {model:models.Menus,as:'orderedMenus'}
-                                                              ]
-                                                    });
-        if (!orders && orders.length > 0) {
+      }else if( idCateringCompany){
+        const orders = await models.Orders.findAll({where:{idCateringCompany:idCateringCompany,year:year,month:month}});
+        if (!orders) {
           throw boom.notFound('Orders not found');
         };
         return orders;
-      } else{
-        throw boom.badRequest('Invalid query parameters');
-      }
+      }else if(paid || paid==0){
+        const orders = await models.Orders.findAll({where:{idCustomer:idCustomer,year:year,month:month, paid:paid},include:[{model:models.Menus,as:'orderedMenus'}]});
+        if (!orders) {
+          throw boom.notFound('Orders not found');
+        };
+        return orders;
+      }else if(delivered || delivered == 0){
+        const orders = await models.Orders.findAll({where:{idCustomer:idCustomer,year:year,month:month,delivered:delivered},include:[{model:models.Menus,as:'orderedMenus'}]});
+        if (!orders) {
+          throw boom.notFound('Orders not found');
+        };
+        return orders;
+      }else if(id){
+         const searchedOrder = await models.Orders.findByPk(id,{include:[{model:models.Customers,as:'orderbyCustomer', include:[{model:models.Organizations,as:'customerOrganization'}]},
+                                                                        {model:models.Menus,as:'orderedMenus'}
+                                                                        ]
+                                                              });
+                if (!searchedOrder){
+                  throw boom.notFound('Customer not found');
+                };
+                return searchedOrder;
+      }else if(idCustomer){
+        const orders = await models.Orders.findAll({where:{idCustomer:idCustomer,year:year,month:month},
+
+                                                    include: [
+                                                      {
+                                                          model: models.Menus,
+                                                          as: 'orderedMenus',
+                                                          attributes: ['idMenu', 'menuName', 'menuDescription', 'menuPrice'],
+                                                          through: {
+                                                              model: models.MenusOrders, // Incluir MenusOrders
+                                                              as: 'menusOrders', // Alias para MenusOrders
+                                                              attributes: ['idMenu', 'idOrder', 'date'], // Selecciona los campos que necesitas
+                                                          }
+                                                      }
+                                                  ]
+                                                  });
+        if (!orders) {
+        throw boom.notFound('Orders not found');
+        };
+        return orders;
+      }else if(all){
+            const orders = await models.Orders.findAll({include:[{model:models.Customers,as:'orderbyCustomer'},
+                                                                 {model:models.Menus,as:'orderedMenus'}
+                                                                  ]
+                                                        });
+            if (!orders && orders.length > 0) {
+              throw boom.notFound('Orders not found');
+            };
+            return orders;
+
+      }else{
+      throw boom.badRequest('Invalid query parameters');
+    }
     }catch (err){
       if (err.isBoom) {
         throw err;

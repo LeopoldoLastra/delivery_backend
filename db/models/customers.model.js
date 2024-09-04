@@ -52,7 +52,8 @@ const CustomersSchema ={
   idUser:{
     allowNull:true,
     type:DataTypes.INTEGER,
-    field:'id_user'
+    field:'id_user',
+    unique: true
   }
 };
 

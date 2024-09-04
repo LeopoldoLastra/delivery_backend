@@ -15,11 +15,13 @@ router.post('/',
 });
 
 router.get('/', async (req,res,next)=>{
+
+  //Hasta ahoira solo uso dayName
   try{
     const {dayName}= req.query;
     if(dayName){
       const searchedDay = await services.findBy({dayName});
-      res.status(200).json({message:'El día es: ', data:searchedDay});
+      res.status(200).json(searchedDay);
     }else if(all){
       const allMenus= await services.findBy({all});
       res.status(200).json({message:'Los días son: ', data:allMenus});

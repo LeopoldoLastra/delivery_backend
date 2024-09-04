@@ -22,6 +22,11 @@ const OrdersSchema ={
     onUpdate: 'CASCADE',
     onDelete: 'SET NULL'
   },
+  idCateringCompany:{
+    allowNull:false,
+    type: DataTypes.INTEGER,
+    field:'id_catering_company'
+  },
   month:{
     allowNull:false,
     type: DataTypes.ENUM('enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'),
@@ -31,6 +36,19 @@ const OrdersSchema ={
     allowNull:false,
     type: DataTypes.INTEGER,
     field:'year',
+  }
+  ,
+  paid:{
+    allowNull:false,
+    type: DataTypes.INTEGER,
+    field:'paid',
+    defaultValue:'0'
+  },
+  delivered:{
+    allowNull:false,
+    type: DataTypes.INTEGER,
+    field:'delivered',
+    defaultValue:'0'
   }
 };
 
@@ -44,7 +62,9 @@ class Orders extends Model{
                       }
     );
     this.belongsTo(models.Customers, {as:'orderbyCustomer', foreignKey:'idCustomer'});
+    this.belongsTo(models.CateringCompanies, {as:'orderCompany', foreignKey:'idCateringCompany'});
   };
+
   static config(sequelize){
     return{
       sequelize,
